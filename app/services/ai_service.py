@@ -1,35 +1,43 @@
 import os
-from groq import Groq
 from dotenv import load_dotenv
+from groq import Groq
 
-# Load keys from .env file
+# Load keys from .env
 load_dotenv()
 
-# Initialize Groq client
+# Create Groq client
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def review_code(diff: str) -> str:
     """
-    This function sends the PR diff to Groq's LLM
-    and returns AI-generated code review feedback.
+    Send a pull request diff to Groq and get back AI review feedback.
     """
     prompt = f"""
-    You are an expert code reviewer.
-    Analyze the following GitHub Pull Request diff and provide:
-    - Code quality issues
-    - Potential bugs
-    - Security concerns
-    - Better coding practices
-    - Missing test cases
+    You are an expert senior code reviewer.
 
-    Code diff:
+    Given the following GitHub Pull Request diff, provide a clear review with:
+    - Code quality issues
+    - Possible bugs or edge cases
+    - Any security concerns
+    - Suggestions to improve readability and structure
+    - Suggestions for tests that should be added
+
+    Be concise but specific. Use bullet points.
+
+    Pull Request diff:
     {diff}
     """
 
     response = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.2
+        model="openai/gpt-oss-20b",  # stable Groq model
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        temperature=0.2,
     )
 
-    return response.choices[0].message["content"]
+    # Newer Groq SDK returns message as an object with .content
+    return response.choices[0].message.content
