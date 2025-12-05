@@ -14,7 +14,7 @@
 
 **Webhook-Driven Architecture:** No polling. System reacts instantly to GitHub events.
 
-## 🔍 How It Works (Simple Explanation)
+## 🔍 How It Works
 1.	A developer opens or updates a pull request in the repository where the GitHub App is installed.
 2.	GitHub triggers a pull_request webhook event and sends it to your FastAPI server.
 3.	The backend extracts key information:
